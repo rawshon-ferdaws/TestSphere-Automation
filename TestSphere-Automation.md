@@ -63,3 +63,17 @@ conftest.py is a PyTest configuration file used to define shared fixtures and ho
 - Maintainability: Browser configuration is managed in one place.
 - Test Isolation: Each test using our default function-scoped `driver` fixture receives a fresh browser instance.
 - Reliability: Ensures proper browser cleanup after test execution.
+
+## 7. Why do we need PyTest Parameterization?
+
+**Answer:**
+
+PyTest parameterization (`@pytest.mark.parametrize`) allows us to execute the same test function multiple times with different sets of test data without duplicating test code.
+
+**Benefits:**
+
+- Code Reusability: Avoids writing separate test functions for similar scenarios.
+- Maintainability: Test logic is managed in one place.
+- Test Coverage: Makes it easier to validate multiple input combinations and edge cases.
+- Readability: Separates test data from test logic.
+- Reporting: Each parameterized scenario appears as a separate test result in PyTest.

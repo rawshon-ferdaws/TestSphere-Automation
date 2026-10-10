@@ -4,15 +4,24 @@ from selenium.webdriver.support.ui import Select
 from pages.base_page import BasePage
 
 
-# ProductsPage: Contains locators and actions for the Products page
-# Inherits reusable Selenium methods from BasePage
+# ProductsPage: Page Object Model for the Products page
+# Contains reusable product listing, sorting, and cart actions.
 class ProductsPage(BasePage):
 
-    # Locators
+    # Locators: Product listing and sorting
     PAGE_TITLE = (By.CLASS_NAME, "title")
     PRODUCT_ITEMS = (By.CLASS_NAME, "inventory_item")
     PRODUCT_PRICES = (By.CLASS_NAME, "inventory_item_price")
     SORT_DROPDOWN = (By.CLASS_NAME, "product_sort_container")
+
+    # Locators: Shopping cart
+    CART_LINK = (By.CLASS_NAME, "shopping_cart_link")
+    CART_BADGE = (By.CLASS_NAME, "shopping_cart_badge")
+
+    # Product-specific buttons
+    BACKPACK_ADD = (By.ID, "add-to-cart-sauce-labs-backpack")
+    BACKPACK_REMOVE = (By.ID, "remove-sauce-labs-backpack")
+    BIKE_LIGHT_ADD = (By.ID, "add-to-cart-sauce-labs-bike-light")
 
     # Get the Products page heading
     def get_page_title(self):
@@ -43,8 +52,41 @@ class ProductsPage(BasePage):
                 self.PRODUCT_PRICES
             )
         )
-
         return [
             float(element.text.replace("$", ""))
             for element in price_elements
         ]
+
+    # Add Sauce Labs Backpack to the cart
+    def add_backpack_to_cart(self):
+        self.click(self.BACKPACK_ADD)
+
+    # Remove Sauce Labs Backpack from the Products page
+    def remove_backpack_from_cart(self):
+        self.click(self.BACKPACK_REMOVE)
+
+    # Add Sauce Labs Bike Light to the cart
+    def add_bike_light_to_cart(self):
+        self.click(self.BIKE_LIGHT_ADD)
+
+    # Get the shopping cart badge count with an optional explicit wait
+    def get_cart_count(self, expected_count=None):
+        def read_cart_count(driver):
+            badges = driver.find_elements(*self.CART_BADGE)
+
+            if not badges:
+                return 0
+
+            badge_text = badges[0].text.strip()
+            return int(badge_text) if badge_text.isdigit() else 0
+
+        if expected_count is not None:
+            self.wait.until(
+                lambda driver: read_cart_count(driver) == expected_count
+            )
+
+        return read_cart_count(self.driver)
+
+    # Open the Shopping Cart page
+    def open_cart(self):
+        self.click(self.CART_LINK)
