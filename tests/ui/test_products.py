@@ -1,17 +1,5 @@
 import pytest
-from pages.login_page import LoginPage
 from pages.products_page import ProductsPage
-
-
-# PyTest Fixture: Login before each Products page test
-@pytest.fixture
-def logged_in_driver(driver):
-    driver.get("https://www.saucedemo.com/")
-
-    login_page = LoginPage(driver)
-    login_page.login("standard_user", "secret_sauce")
-
-    return driver
 
 
 # Positive Testing: Verify Products page is displayed

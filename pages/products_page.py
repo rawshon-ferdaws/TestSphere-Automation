@@ -87,6 +87,14 @@ class ProductsPage(BasePage):
 
         return read_cart_count(self.driver)
 
-    # Open the Shopping Cart page
+    # Open the Shopping Cart page and wait until it is loaded.
     def open_cart(self):
+        # Click the shopping cart icon.
         self.click(self.CART_LINK)
+
+        # Wait until the Shopping Cart heading is displayed.
+        self.wait.until(
+            EC.text_to_be_present_in_element(
+                self.PAGE_TITLE, "Your Cart"
+            )
+        )

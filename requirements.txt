@@ -1,4 +1,6 @@
 selenium==4.50.0
 pytest==9.1.1
-requests==2.34.2
 pytest-html==4.2.0
+pytest-metadata
+allure-pytest
+requests==2.34.2

@@ -31,7 +31,7 @@ If a login element's locator changes, we update it in LoginPage instead of modif
 - @pytest.fixture: Defines a reusable fixture for browser setup and teardown.
 - webdriver.Chrome(): Launches Chrome using Selenium WebDriver. Selenium Manager automatically manages the ChromeDriver when needed.
 - yield browser: Provides the browser instance to the test and allows teardown code to execute after the test finishes.
-- browser.quit(): Closes the browser session after test execution, even if the test fails, because it is inside a finally block.
+- browser.quit(): Closes the browser session during PyTest's yield-fixture teardown, even if the test fails. The cleanup code runs after `yield browser`.
 
 **Why do we need it?**
 
@@ -77,3 +77,89 @@ PyTest parameterization (`@pytest.mark.parametrize`) allows us to execute the sa
 - Test Coverage: Makes it easier to validate multiple input combinations and edge cases.
 - Readability: Separates test data from test logic.
 - Reporting: Each parameterized scenario appears as a separate test result in PyTest.
+
+## 8. How did we solve synchronization issue?
+
+**Answer:**
+
+### 1. What is a Synchronization Issue?
+
+A synchronization issue occurs when Selenium tries to interact with or validate an element before the application is ready.
+
+### 2. When Did It Happen?
+
+In our TestSphere-Automation project, Selenium checked the Cart page title before navigation completed.
+
+- Expected: Your Cart
+- Actual: Products
+- Error: `AssertionError: assert 'Products' == 'Your Cart'`
+
+### 3. How Did We Solve It?
+
+We added an explicit wait using WebDriverWait and Expected Conditions (EC).
+
+**Before:**
+
+```python
+def open_cart(self):
+    self.click(self.CART_LINK)
+```
+
+**After:**
+
+```python
+def open_cart(self):
+    self.click(self.CART_LINK)
+    self.wait.until(
+        EC.text_to_be_present_in_element(
+            self.PAGE_TITLE, "Your Cart"
+        )
+    )
+```
+
+**Explanation:** Selenium waits until the Cart page heading contains "Your Cart" before continuing.
+
+**Result:** All 12 UI tests passed.
+
+**Jira:** KAN-4 — Resolved (Done).
+
+## 9. How did we solve Flaky Test issues?
+
+**Answer:**
+
+### 1. What is a Flaky Test?
+
+A flaky test is an automated test that sometimes passes and sometimes fails without changes to the application or test code.
+
+### 2. When Did It Happen?
+
+In our TestSphere-Automation project, we experienced intermittent Selenium failures during Cart testing.
+
+- Error: `NoSuchWindowException: target window already closed`
+- Behavior: Some test runs failed, while subsequent runs passed.
+- Possible Causes: Browser lifecycle issues, timing problems, or WebDriver session instability.
+
+The exact root cause was not confirmed.
+
+### 3. How Did We Investigate It?
+
+We reran the UI tests and compared execution results with the Allure plugin enabled and disabled.
+
+**Without Allure plugin:**
+
+```bash
+python -m pytest tests/ui/ -v -p no:allure_pytest
+```
+
+**With Allure reporting:**
+
+```bash
+python -m pytest tests/ui/ -v --alluredir=allure-results --clean-alluredir
+```
+
+**Explanation:** Both configurations eventually passed, so we could not confirm that Allure caused the intermittent failures.
+
+### 4. Verification
+
+- Result: 12 Passed, 0 Failed in the latest execution.
+- Status: Intermittent issue under monitoring; root cause not confirmed.

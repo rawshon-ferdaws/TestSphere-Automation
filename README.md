@@ -19,8 +19,6 @@
 
 **Expected Result:** The user successfully logs in and is redirected to the Products page (`/inventory.html`).
 
-**Tools and Framework:** Python, Selenium WebDriver, PyTest, Page Object Model (POM).
-
 ### Negative Login Testing
 
 **Objective:** Verify that the application correctly handles invalid or missing login credentials by displaying appropriate error messages.
@@ -48,7 +46,7 @@ The following table summarizes the types of testing we have completed, are plann
 | 5 | Data-Driven Testing | Multiple test inputs using PyTest parameterization | Implemented |
 | 6 | Smoke Testing | Critical functionality such as login and checkout | Planned |
 | 7 | Sanity Testing | Focused testing after specific bug fixes | Planned |
-| 8 | Regression Testing | Re-execute existing tests after application changes | Planned |
+| 8 | Regression Testing | Re-execute existing tests after application changes | In progress |
 | 9 | Integration Testing | Validate interactions between UI, API, and database | Planned |
 | 10 | REST API Testing | HTTP methods, status codes, JSON responses, CRUD operations | Planned |
 | 11 | Database Testing | SQL validation, data integrity, transaction records | Planned |
@@ -59,7 +57,7 @@ The following table summarizes the types of testing we have completed, are plann
 
 ### Testing techniques and tools
 
-These support our testing activities but are not separate testing types.
+These support our testing activities but are not separate testing types. Selenium, PyTest, POM, and explicit waits are used in the current UI tests; API testing, database validation, CI/CD, reporting, and defect-tracking tools are planned.
 
 | Technique / Tool | Purpose |
 | --- | --- |
@@ -72,3 +70,13 @@ These support our testing activities but are not separate testing types.
 | GitHub Actions | CI/CD test execution |
 | Allure / PyTest HTML | Test execution reporting |
 | Jira | Defect tracking and management |
+
+### Run UI Tests
+
+From the project directory, use the project's virtual environment:
+
+```bash
+.venv/bin/python -m pytest tests/ui -v
+```
+
+The suite includes 12 UI cases: 4 login, 4 products, and 4 cart. The temporary browser diagnostic test has been removed after troubleshooting.

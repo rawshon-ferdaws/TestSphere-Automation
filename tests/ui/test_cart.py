@@ -1,21 +1,5 @@
-import pytest
-from pages.login_page import LoginPage
 from pages.products_page import ProductsPage
 from pages.cart_page import CartPage
-
-
-# Fixture: Log in before each Shopping Cart test
-@pytest.fixture
-def logged_in_driver(driver):
-    driver.get("https://www.saucedemo.com/")
-
-    login_page = LoginPage(driver)
-    login_page.login("standard_user", "secret_sauce")
-
-    # Verify login succeeded before testing cart operations
-    assert "/inventory.html" in driver.current_url
-
-    return driver
 
 
 # TC_CART_01: Verify adding one product updates the cart badge

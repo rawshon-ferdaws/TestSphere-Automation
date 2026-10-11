@@ -14,18 +14,18 @@ class CartPage(BasePage):
 
     BACKPACK_REMOVE = (By.ID, "remove-sauce-labs-backpack")
 
-    # Wait for the Shopping Cart page to load and return its heading
+    # Wait for the Shopping Cart page and return its heading.
     def get_page_title(self):
+        # Wait until navigation to the Cart page is complete.
         self.wait.until(
-            EC.url_contains("/cart.html")
+            EC.url_contains("cart.html")
         )
-        return self.wait.until(
-            EC.text_to_be_present_in_element(
-                self.PAGE_TITLE, "Your Cart"
-            )
-        ) and self.driver.find_element(
-            *self.PAGE_TITLE
-        ).text
+
+        # Wait until the Cart page heading is visible.
+        title = self.wait.until(
+            EC.visibility_of_element_located(self.PAGE_TITLE)
+        )
+        return title.text
 
     # Get all product names displayed in the cart
     def get_product_names(self):
