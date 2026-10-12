@@ -31,7 +31,7 @@ If a login element's locator changes, we update it in LoginPage instead of modif
 - @pytest.fixture: Defines a reusable fixture for browser setup and teardown.
 - webdriver.Chrome(): Launches Chrome using Selenium WebDriver. Selenium Manager automatically manages the ChromeDriver when needed.
 - yield browser: Provides the browser instance to the test and allows teardown code to execute after the test finishes.
-- browser.quit(): Closes the browser session during PyTest's yield-fixture teardown, even if the test fails. The cleanup code runs after `yield browser`.
+- browser.quit(): Closes the browser during fixture teardown, including when the test fails after the fixture has yielded.
 
 **Why do we need it?**
 
@@ -119,11 +119,13 @@ def open_cart(self):
 
 **Explanation:** Selenium waits until the Cart page heading contains "Your Cart" before continuing.
 
+`self.wait` is a `WebDriverWait` instance initialized in `BasePage` and inherited by `ProductsPage`. This lets page classes reuse the synchronization setup defined in `BasePage`.
+
 **Result:** All 12 UI tests passed.
 
 **Jira:** KAN-4 — Resolved (Done).
 
-## 9. How did we solve Flaky Test issues?
+## 9. How did we investigate Flaky Test issues?
 
 **Answer:**
 
